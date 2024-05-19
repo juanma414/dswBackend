@@ -20,7 +20,7 @@ app.get("/api/user/:id", (req, res) => {
 });
 //User --> request --> express ~~> middleware que forma req.body --> app.post(req.body) -->response -->  User
 //El middleware lo podemos poner en la ruta despues del path como "middleware" o en general al principio.
-app.post("api/user", (req, res) => {
+app.post("/api/user", (req, res) => {
     const { name, lastName, rol, email, id } = req.body;
     //Con la info obtenida creamos el nuevo User
     const user = new User(name, lastName, rol, email, id);
