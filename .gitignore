@@ -1,1 +1,20 @@
-*node_modules/*
+#coverage reports
+coverage
+# API keys and secrets
+.env
+# dependencies directory
+node_modules
+# ignore build ts files
+dist/**/*
+# vscode settings
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/keybindings.json
+!.vscode/*.code-snippets
+# local history for studio code
+.history/*
+# built vscode extension
+*.vsix

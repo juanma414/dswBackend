@@ -1,4 +1,4 @@
-import express, { NextFunction, Request, Response } from "express";
+import express, { NextFunction, Request, Response } from 'express';
 import { User } from "./user.js"; //Por ahora se queda asi, despues se cambia por la DB
 
 const app = express();
@@ -52,6 +52,9 @@ app.get("/api/user/:id", (req, res) => {
 //User --> request --> express ~~> middleware que forma req.body --> app.post(req.body) -->response -->  User
 //El middleware lo podemos poner en la ruta despues del path como "middleware" o en general al principio.
 app.post("/api/user", sanitizaUserInput, (req, res) => {
+  
+  
+  
   const input = req.body.sanitizaInput;
 
   //Con la info obtenida creamos el nuevo User
@@ -77,7 +80,7 @@ app.put("/api/user/:id", sanitizaUserInput, (req, res) => {
 
   users[userId] = { ...users[userId], ...req.body.sanitizaInput };
 
-  res.status(200).send({ message: "Modificaciones realizadas", data: users });
+  res.status(200).send({ message: "Modificaciones realizadas", data: users[userId] });
 });
 
 app.delete("/api/user/:id", (req, res) => {
@@ -91,7 +94,7 @@ app.delete("/api/user/:id", (req, res) => {
   users.splice(userIdx, 1);
   res
     .status(200)
-    .send({ message: "Usuario borrado correctamente", data: users });
+    .send({ message: "Usuario borrado correctamente", data: users[userIdx] });
 });
 
 //Mensaje que se emite en caso de que la URI que se llama no exista y no llame a ningún método de los anteriores

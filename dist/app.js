@@ -1,4 +1,4 @@
-import express from "express";
+import express from 'express';
 import { User } from "./user.js"; //Por ahora se queda asi, despues se cambia por la DB
 const app = express();
 //Definimos el middleware para poder realizar los Post, Put y Patch
@@ -49,7 +49,7 @@ app.put("/api/user/:id", sanitizaUserInput, (req, res) => {
         return res.status(404).send({ message: "User no encontrado" });
     }
     users[userId] = { ...users[userId], ...req.body.sanitizaInput };
-    res.status(200).send({ message: "Modificaciones realizadas", data: users });
+    res.status(200).send({ message: "Modificaciones realizadas", data: users[userId] });
 });
 app.delete("/api/user/:id", (req, res) => {
     const userIdx = users.findIndex((user) => user.id === req.params.id);
@@ -60,7 +60,7 @@ app.delete("/api/user/:id", (req, res) => {
     users.splice(userIdx, 1);
     res
         .status(200)
-        .send({ message: "Usuario borrado correctamente", data: users });
+        .send({ message: "Usuario borrado correctamente", data: users[userIdx] });
 });
 //Mensaje que se emite en caso de que la URI que se llama no exista y no llame a ningún método de los anteriores
 //Se hace asi, porque sino devuelve un HTML y no una respuesta de API 
