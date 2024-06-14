@@ -1,5 +1,5 @@
 import express, { NextFunction, Request, Response } from 'express';
-import { User } from "./user.js"; //Por ahora se queda asi, despues se cambia por la DB
+import { User } from "./users/users.entity.js"; //Por ahora se queda asi, despues se cambia por la DB
 
 const app = express();
 
