@@ -19,5 +19,3 @@ Para instalar y ejecutar este proyecto, sigue estos pasos:
 2. Navega al directorio del proyecto usando `cd dsBackend`.
 
 3. Instala las dependencias del proyecto usando `pnpm install`.
-
-4. Ejecuta el proyecto usando `pnpm start`.

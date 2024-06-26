@@ -4,6 +4,6 @@ export class User {
     public lastName: string,
     public rol: string[],
     public email: string,
-    public id:string
+    public id?:number //Se pone como opcional, ya que al crear no se tiene ID
   ) {}
 }

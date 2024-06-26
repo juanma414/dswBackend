@@ -19,12 +19,12 @@ function sanitizaUserInput(req: Request, res: Response, next: NextFunction) {
 }
 
 //GET ALL
-function findAll(req: Request, res: Response) {
-  res.json({ data: repository.findAll() });
+async function findAll(req: Request, res: Response) {
+  res.json({ data: await repository.findAll() });
 }
 
 //GET ONE
-function findOne(req: Request, res: Response) {
+async function findOne(req: Request, res: Response) {
   const user = repository.findOne({ id: req.params.id });
 
   if (!user) {
@@ -35,7 +35,7 @@ function findOne(req: Request, res: Response) {
 }
 
 //POST
-function add(req: Request, res: Response) {
+async function add(req: Request, res: Response) {
   const input = req.body.sanitizaInput;
 
   const userInput = new User(
@@ -46,15 +46,13 @@ function add(req: Request, res: Response) {
     input.id
   );
 
-  const user = repository.add(userInput);
+  const user = await repository.add(userInput);
   res.status(201).send({ message: "User creado correctamnte", data: user });
 }
 
-
-
-
 //PUT and PATCH
 function update(req: Request, res: Response) {
+  /*
   req.body.sanitizaInput.id = req.params.id;
 
   const user = repository.update(req.body.sanitizaInput);
@@ -65,11 +63,11 @@ function update(req: Request, res: Response) {
 
   return res
     .status(200)
-    .send({ message: "Modificaciones realizadas", data: user });
+    .send({ message: "Modificaciones realizadas", data: user }); */
 }
 
 //DELETE
-function deleteUser(req: Request, res: Response) {
+async function deleteUser(req: Request, res: Response) {
   const user = repository.delete({ id: req.params.id });
 
   if (!user) {

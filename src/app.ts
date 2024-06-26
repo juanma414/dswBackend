@@ -1,4 +1,20 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express, { NextFunction, Request, Response } from "express";
+import { userRouter } from "./users/users.route.js";
+
+const app = express();
+app.use(express.json());
+
+app.use("/api/user", userRouter);
+
+app.use((_, res) => {
+  return res.status(404).send({ message: "Resource not found" });
+});
+
+app.listen(3000, () => {
+  console.log("Server runnning on http://localhost:3000/");
+});
+
+/* import express, { NextFunction, Request, Response } from 'express';
 import { User } from "./users/users.entity.js"; //Por ahora se queda asi, despues se cambia por la DB
 
 const app = express();
@@ -106,4 +122,4 @@ app.use((_, res) => {
 //Sabemos si esta corriendo el Servidor que estamos usando
 app.listen(3000, () => {
   console.log("Server running on http://localhost:3000/");
-});
+}); */
