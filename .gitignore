@@ -1,7 +1,7 @@
 #coverage reports
 coverage
 # API keys and secrets
-.env
+*.env
 # dependencies directory
 node_modules
 # ignore build ts files

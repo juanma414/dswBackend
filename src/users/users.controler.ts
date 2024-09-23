@@ -19,7 +19,10 @@ function sanitizaUserInput(req: Request, res: Response, next: NextFunction) {
 }
 
 //GET ALL
-async function findAll(req: Request, res: Response) {
+async function findAll(
+  
+  req: Request, res: Response) {
+    console.log("findAll");
   res.json({ data: await repository.findAll() });
 }
 

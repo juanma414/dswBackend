@@ -17,6 +17,7 @@ const users = [
 export class UserRepository implements Repository<User> {
 
   public async findAll(): Promise<User[] | undefined> {
+    console.log("findAll");
     const [users] = await pool.query("SELECT * FROM users");
     return users as User[];
   }
