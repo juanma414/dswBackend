@@ -19,22 +19,18 @@ function sanitizaUserInput(req: Request, res: Response, next: NextFunction) {
 }
 
 //GET ALL
-async function findAll(
-  
-  req: Request, res: Response) {
-    console.log("findAll");
+async function findAll(req: Request, res: Response) {
   res.json({ data: await repository.findAll() });
 }
 
 //GET ONE
 async function findOne(req: Request, res: Response) {
-  const user = repository.findOne({ id: req.params.id });
-
+  const id = req.params.id;
+  const user = await repository.findOne({ id });
   if (!user) {
     return res.status(404).send({ message: "User no encontrado" });
   }
-
-  res.json(user);
+  res.json({ data: user });
 }
 
 //POST
@@ -54,19 +50,15 @@ async function add(req: Request, res: Response) {
 }
 
 //PUT and PATCH
-function update(req: Request, res: Response) {
-  /*
+async function update(req: Request, res: Response) {
   req.body.sanitizaInput.id = req.params.id;
-
-  const user = repository.update(req.body.sanitizaInput);
-
+  const user = await repository.update(req.body.sanitizaInput.id,req.body.sanitizaInput);
   if (!user) {
     return res.status(404).send({ message: "User no encontrado" });
   }
-
   return res
     .status(200)
-    .send({ message: "Modificaciones realizadas", data: user }); */
+    .send({ message: "Modificaciones realizadas", data: user });
 }
 
 //DELETE
