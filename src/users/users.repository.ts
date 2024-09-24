@@ -74,17 +74,22 @@ export class UserRepository implements Repository<User> {
         });
       }
     }
-    return userInput;
+    return await this.findOne({id});
   }
 
-  public delete(item: { id: string }): Promise<User | undefined> {
-    /*const userIdx = users.findIndex((user) => user.id === item.id);
+  public async delete(item: { id: string }): Promise<User | undefined> {
+    try {
+      const userToDelete = await this.findOne(item);
+      /*Lo ponemos en una constante ya que lo necesitamos para borrar en ambas tablas*/
+      const id = Number.parseInt(item.id);
 
-    if (userIdx != -1) {
-      const deleteuser = users[userIdx];
-      users.splice(userIdx, 1);
+      /*Antes de borrar el usuario hay que borrar los roles*/
+      await pool.query("DELETE FROM usersRol WHERE userId = ?", id);
+      await pool.query("DELETE FROM users WHERE id = ?", id);
+
+      return userToDelete;
+    } catch (error: any) {
+      throw new Error("No se pudo borrar usuario seleccionado");
     }
-    return;*/
-    throw new Error("not implemented");
   }
 }

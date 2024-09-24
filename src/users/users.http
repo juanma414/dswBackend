@@ -35,4 +35,4 @@ Content-Type: application/json
 }
 
 ### Borrar un User
-DELETE http://localhost:3000/api/user/000125
+DELETE http://localhost:3000/api/user/4
