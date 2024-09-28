@@ -1,9 +1,26 @@
-export class User {
-  constructor(
-    public name: string,
-    public lastName: string,
-    public rol: string[],
-    public email: string,
-    public id?:number //Se pone como opcional, ya que al crear no se tiene ID y se autogenera
-  ) {}
+import {
+  Entity,
+  Property,
+  ManyToMany,
+  Cascade,
+} from "@mikro-orm/core";
+import { BaseEntity } from "../../shared/db/baseEntity.entity.js";
+import { Rol } from "./roles.entity.js";
+
+@Entity()
+export class User extends BaseEntity {
+  @Property({ nullable: false })
+  name!: string;
+
+  @Property({ nullable: false })
+  lastName!: string;
+
+  @ManyToMany(() => Rol, (roles) => roles.roles, {
+    cascade: [Cascade.ALL],
+    owner: true,
+  })
+  roles!: Rol[];
+
+  @Property({ nullable: false })
+  email!: string;
 }

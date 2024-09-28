@@ -4,15 +4,14 @@ GET http://localhost:3000/api/user
 ### Llamada con la API un solo usuario 
 GET http://localhost:3000/api/user/3
 
-### Crear un nuevo User  
+### POST
 POST http://localhost:3000/api/user HTTP/1.1
 Content-Type: application/json
 
 {
-    "name": "Batman" ,
-    "lastName": "Bat",
-    "rol": ["DBA","PM"],
-    "email": "batman@test.com"
+    "name": "Juan" ,
+    "lastName": "Pedro pepe",
+    "email": "batmaaaan@test.com"
 }
 
 ### Modificar un User (PUT --> con todas las entidades, PATCH --> modifica alguna de las entidades, no todas)
