@@ -1,37 +1,29 @@
-### Llamada con la API todos los usuarios
+### GET
 GET http://localhost:3000/api/user
 
-### Llamada con la API un solo usuario 
-GET http://localhost:3000/api/user/3
-
 ### POST
+# @name user
 POST http://localhost:3000/api/user HTTP/1.1
 Content-Type: application/json
 
 {
-    "name": "Juan" ,
-    "lastName": "Pedro pepe",
-    "email": "batmaaaan@test.com"
+    "userName": "Sol" ,
+    "userLastName": "Lopez",
+    "userRol": "Programador",
+    "userEmail": "solLopes@test.com"
 }
 
-### Modificar un User (PUT --> con todas las entidades, PATCH --> modifica alguna de las entidades, no todas)
-PUT http://localhost:3000/api/user/3 HTTP/1.1
+### GET ONE
+@id = {{user.response.body.data.userId}}
+GET http://localhost:3000/api/user/{{id}}
+
+### PUT
+PUT http://localhost:3000/api/user/{{id}} HTTP/1.1
 Content-Type: application/json
 
 {   
-    "name": "TenerCuidado" ,
-    "lastName": "Con Patch",
-    "rol":  ["Tester","Programador","DBA","PM"],
-    "email": "PATCHdejanull@test.com"
+    "userEmail": "cambiocorreonoma@test.com"
 }
 
-### Modificaciones parciales
-PATCH  http://localhost:3000/api/user/3 HTTP/1.1
-Content-Type: application/json
-
-{   
-    "rol":  ["Tester","PM"]
-}
-
-### Borrar un User
-DELETE http://localhost:3000/api/user/4
+### DELETE
+DELETE http://localhost:3000/api/user/{{id}}
