@@ -1,0 +1,31 @@
+### GET
+GET http://localhost:3000/api/issue
+
+### POST
+# @name issue
+POST http://localhost:3000/api/issue HTTP/1.1
+Content-Type: application/json
+
+{
+  "issueDescription":"Problema en el reporte B",
+  "issueCreateDate":"11/11/2024",
+  "issueEndDate":"",
+  "issueStataus":"En progreso",
+  "issueSupervisor":"Juan Perez",
+  "issuePriority":"Alto"
+}
+
+### GET ONE
+@id = {{issue.response.body.data.issueId}}
+GET http://localhost:3000/api/issue/{{id}}
+
+### PUT
+PUT http://localhost:3000/api/issue/{{id}} HTTP/1.1
+Content-Type: application/json
+
+{   
+    "issuePriority": "Bajo"
+}
+
+### DELETE
+DELETE http://localhost:3000/api/issue/{{id}}

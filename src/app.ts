@@ -3,6 +3,8 @@ import express, { NextFunction, Request, Response } from "express";
 import { userRouter } from "./users/user.routers.js";
 import { orm, syncSchema } from "../shared/db/orm.js";
 import { RequestContext } from "@mikro-orm/core";
+import { issueRouter } from "./issues/issue.routers.js";
+import { projectRouter } from "./projects/project.routers.js";
 
 const app = express();
 app.use(express.json());
@@ -11,9 +13,12 @@ app.use(express.json());
 app.use((req, res, next) => {
   RequestContext.create(orm.em, next);
 });
+
 //antes de las rutas y middleware del negocio
 
 app.use("/api/user", userRouter);
+app.use("/api/issue", issueRouter);
+app.use("/api/project", projectRouter);
 
 app.use((_, res) => {
   return res.status(404).send({ message: "Resource not found" });

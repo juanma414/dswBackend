@@ -1,14 +1,14 @@
 import { Request, Response } from "express";
 import { orm } from "../../shared/db/orm.js";
-import { user } from "./user.entity.js";
+import { project } from "./project.entity.js";
 
 const em = orm.em;
 
 //GET ALL
 async function findAll(req: Request, res: Response) {
   try {
-    const usersClasses = await em.find(user, {});
-    res.status(200).json({ messge: "Todos los usuarios encontrados", usersClasses });
+    const projectClass = await em.find(project, {});
+    res.status(200).json({ messge: "Proyectos encontrados", projectClass });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
@@ -17,9 +17,9 @@ async function findAll(req: Request, res: Response) {
 //POST
 async function add(req: Request, res: Response) {
   try {
-    const userClass = em.create(user, req.body);
+    const projectClass = em.create(project, req.body);
     await em.flush(); //Es el commit
-    res.status(201).json({ message: "Usuario creado", data: userClass });
+    res.status(201).json({ message: "Proyecto creado", data: projectClass });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
@@ -28,9 +28,9 @@ async function add(req: Request, res: Response) {
 //GET ONE
 async function findOne(req: Request, res: Response) {
   try {
-    const userId = Number.parseInt(req.params.id);
-    const userClass = await em.findOneOrFail(user, { userId });
-    res.status(200).json({ message: "Usuario encontrado", data: userClass });
+    const projectId = Number.parseInt(req.params.id);
+    const projectClass = await em.findOneOrFail(project, { projectId });
+    res.status(200).json({ message: "Proyecto encontrado", data: projectClass });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
@@ -39,12 +39,12 @@ async function findOne(req: Request, res: Response) {
 //PUT
 async function update(req: Request, res: Response) {
   try {
-    const userId = Number.parseInt(req.params.id);
-    const userClass = em.getReference(user, { userId });
+    const projectId = Number.parseInt(req.params.id);
+    const projectClass = em.getReference(project, { projectId });
     //como ya tenemos el registro que queremos modificar, pasamos los datos que ingresaron
-    em.assign(userClass, req.body);
+    em.assign(projectClass, req.body);
     await em.flush();
-    res.status(200).json({ message: "Usuario modificado", data: userClass });
+    res.status(200).json({ message: "Proeycto modificado", data: projectClass });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
@@ -53,10 +53,10 @@ async function update(req: Request, res: Response) {
 //DELETE
 async function deleteUser(req: Request, res: Response) {
   try {
-    const userId = Number.parseInt(req.params.id);
-    const userClass = em.getReference(user, { userId });
-    em.removeAndFlush(userClass);
-    res.status(200).json({ message: "Usuario borrado", data: userClass });
+    const projectId = Number.parseInt(req.params.id);
+    const projectClass = em.getReference(project, { projectId });
+    em.removeAndFlush(projectClass);
+    res.status(200).json({ message: "Proyecto borrado", data: projectClass });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
