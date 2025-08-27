@@ -1,4 +1,5 @@
 import "reflect-metadata";
+import cors from "cors";
 import express, { NextFunction, Request, Response } from "express";
 import { userRouter } from "./users/user.routers.js";
 import { orm, syncSchema } from "../shared/db/orm.js";
@@ -7,6 +8,13 @@ import { issueRouter } from "./issues/issue.routers.js";
 import { projectRouter } from "./projects/project.routers.js";
 
 const app = express();
+const corsOptions = {
+  origin: "http://localhost:4200",
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
+
 app.use(express.json());
 
 //luego de los middlewares base

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { orm } from "../../shared/db/orm.js";
 import { user } from "./user.entity.js";
+import bcrypt from "bcrypt";
 
 const em = orm.em;
 
@@ -14,12 +15,35 @@ async function findAll(req: Request, res: Response) {
   }
 }
 
-//POST
+//POST - REGISTER
 async function add(req: Request, res: Response) {
   try {
-    const userClass = em.create(user, req.body);
-    await em.flush(); //Es el commit
-    res.status(201).json({ message: "Usuario creado", data: userClass });
+    const { userName, userLastName, userRol, userEmail, userPassword } = req.body;
+    
+    // Verificar si el email ya existe
+    const existingUser = await em.findOne(user, { userEmail });
+    if (existingUser) {
+      return res.status(400).json({ message: "El email ya está registrado" });
+    }
+    
+    // Encriptar contraseña
+    const hashedPassword = await bcrypt.hash(userPassword, 10);
+    
+    const userData = {
+      userName,
+      userLastName,
+      userRol,
+      userEmail,
+      userPassword: hashedPassword
+    };
+    
+    const userClass = em.create(user, userData as any);
+    await em.flush();
+    
+    // No devolver la contraseña en la respuesta
+    const { userPassword: _, ...userWithoutPassword } = userClass;
+    
+    res.status(201).json({ message: "Usuario registrado exitosamente", data: userWithoutPassword });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
@@ -62,10 +86,82 @@ async function deleteUser(req: Request, res: Response) {
   }
 }
 
+//LOGIN
+async function login(req: Request, res: Response) {
+  try {
+    const { userEmail, userPassword } = req.body;
+    
+    // Buscar usuario por email
+    const userClass = await em.findOne(user, { userEmail });
+    if (!userClass) {
+      return res.status(401).json({ message: "Email o contraseña incorrectos" });
+    }
+    
+    // Verificar contraseña
+    const isValidPassword = await bcrypt.compare(userPassword, userClass.userPassword || '');
+    if (!isValidPassword) {
+      return res.status(401).json({ message: "Email o contraseña incorrectos" });
+    }
+    
+    // Login exitoso - no devolver contraseña
+    const { userPassword: _, ...userWithoutPassword } = userClass;
+    
+    res.status(200).json({ 
+      message: "Login exitoso", 
+      data: userWithoutPassword,
+      success: true 
+    });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+//SEED USERS - Crear usuarios de prueba
+async function seedUsers(req: Request, res: Response) {
+  try {
+    const testUsers = [
+      {
+        userName: 'Admin',
+        userLastName: 'Sistema',
+        userRol: 'administrator',
+        userEmail: 'admin@test.com',
+        userPassword: await bcrypt.hash('admin123', 10)
+      },
+      {
+        userName: 'Juan',
+        userLastName: 'Pérez',
+        userRol: 'developer',
+        userEmail: 'juan@test.com',
+        userPassword: await bcrypt.hash('juan123', 10)
+      }
+    ];
+
+    const createdUsers = [];
+    for (const userData of testUsers) {
+      const existingUser = await em.findOne(user, { userEmail: userData.userEmail });
+      if (!existingUser) {
+        const newUser = em.create(user, userData as any);
+        createdUsers.push(newUser);
+      }
+    }
+    
+    await em.flush();
+    
+    res.status(201).json({ 
+      message: `${createdUsers.length} usuarios de prueba creados`, 
+      data: createdUsers.map(u => ({ ...u, userPassword: undefined }))
+    });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
 export const controler = {
   findAll,
   findOne,
   add,
   update,
   deleteUser,
+  login,
+  seedUsers,
 };

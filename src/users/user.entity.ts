@@ -16,4 +16,7 @@ export class user {
 
   @Property({ fieldName: 'userEmail',unique: true }) //Unico sobre el correo, no duplicado
   userEmail?: string;
+
+  @Property({ fieldName: 'userPassword', nullable: false })
+  userPassword?: string;
 }
