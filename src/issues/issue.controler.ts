@@ -1,65 +1,26 @@
 import { Request, Response } from "express";
 import { orm } from "../../shared/db/orm.js";
 import { issue } from "./issue.entity.js";
-import { user } from "../users/user.entity.js";
 
 const em = orm.em;
 
-//GET ALL (filtrado por rol de usuario)
+//GET ALL (excluir los eliminados y completados)
 async function findAll(req: Request, res: Response) {
   try {
-    const { userRole, userId } = req.query;
-    
-    let filter: any = { 
+    // Filtrar issues que no estén eliminados ni completados
+    const issueClass = await em.find(issue, { 
       issueStataus: { $nin: ['deleted', 'completed'] } 
-    };
-    
-    // Si no es administrador, filtrar por nombre del usuario
-    if (userRole !== 'administrator') {
-      // Obtener el nombre del usuario actual
-      const currentUser = await em.findOne(user, { userId: parseInt(userId as string) });
-      if (currentUser) {
-        const fullName = `${currentUser.userName} ${currentUser.userLastName}`;
-        filter.issueSupervisor = fullName;
-      }
-    }
-    
-    const issues = await em.find(issue, filter);
-    
-    // Como el campo issueSupervisor ya contiene el nombre completo,
-    // simplemente lo usamos directamente
-    const issuesWithUserInfo = issues.map((issueItem) => ({
-      ...issueItem,
-      supervisorName: issueItem.issueSupervisor || 'Sin Asignar'
-    }));
-    
-    res.status(200).json({ message: "Se encontraron todos los Issues", issueClass: issuesWithUserInfo });
+    });
+    res.status(200).json({ message: "Se encontraron todos los Issues", issueClass });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
 }
 
-//POST (asignar issue al usuario que lo crea)
+//POST
 async function add(req: Request, res: Response) {
   try {
-    const { userId } = req.body;
-    
-    // Obtener el nombre completo del usuario para asignarlo al issue
-    let supervisorName = 'Usuario Desconocido';
-    if (userId) {
-      const currentUser = await em.findOne(user, { userId: parseInt(userId) });
-      if (currentUser) {
-        supervisorName = `${currentUser.userName} ${currentUser.userLastName}`;
-      }
-    }
-    
-    // Asignar automáticamente el issue al usuario que lo está creando
-    const issueData = {
-      ...req.body,
-      issueSupervisor: supervisorName // Asignar el nombre completo del usuario
-    };
-    
-    const issueClass = em.create(issue, issueData);
+    const issueClass = em.create(issue, req.body);
     await em.flush(); //Es el commit
     res.status(201).json({ message: "Issue creado", data: issueClass });
   } catch (error: any) {
@@ -92,17 +53,10 @@ async function update(req: Request, res: Response) {
   }
 }
 
-//DELETE (Soft Delete - solo administradores)
+//DELETE (Soft Delete - cambiar estado a deleted)
 async function deleteUser(req: Request, res: Response) {
   try {
     const issueId = Number.parseInt(req.params.id);
-    const { userRole } = req.body;
-    
-    // Verificar que solo administradores puedan eliminar
-    if (userRole !== 'administrator') {
-      return res.status(403).json({ message: "Solo los administradores pueden eliminar issues" });
-    }
-    
     const issueClass = await em.findOneOrFail(issue, { issueId });
     
     // En lugar de eliminar, cambiar el estado a 'deleted'
@@ -124,8 +78,8 @@ async function updateStatus(req: Request, res: Response) {
     const issueClass = await em.findOneOrFail(issue, { issueId });
     issueClass.issueStataus = status;
     
-    // Si el nuevo status es 'completed', actualizar issueEndDate
-    if (status === 'completed') {
+    // Si el nuevo status es 'closed', actualizar issueEndDate
+    if (status === 'closed' && !issueClass.issueEndDate) {
       issueClass.issueEndDate = new Date();
     }
     
