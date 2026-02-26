@@ -6,6 +6,8 @@ import { orm, syncSchema } from "../shared/db/orm.js";
 import { RequestContext } from "@mikro-orm/core";
 import { issueRouter } from "./issues/issue.routers.js";
 import { projectRouter } from "./projects/project.routers.js";
+import { typeIssueRouter } from "./typeIssue/typeIssue.routers.js";
+import { commentRouter } from "./comment/comment.routers.js";
 
 const app = express();
 const corsOptions = {
@@ -27,6 +29,8 @@ app.use((req, res, next) => {
 app.use("/api/user", userRouter);
 app.use("/api/issue", issueRouter);
 app.use("/api/project", projectRouter);
+app.use("/api/typeIssue", typeIssueRouter);
+app.use("/api/comment", commentRouter);
 
 app.use((_, res) => {
   return res.status(404).send({ message: "Resource not found" });

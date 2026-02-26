@@ -1,0 +1,36 @@
+### GET
+GET http://localhost:3000/api/comment
+
+### POST
+# @name comment
+POST http://localhost:3000/api/comment HTTP/1.1
+Content-Type: application/json
+
+{
+  "description": "Comentario 2 en user 1",
+  "createDate": "2024-01-01T00:00:00.000Z",
+  "issue": 1,
+  "user": 1
+}
+
+### GET ONE
+@id = {{comment.response.body.data.idComment}}
+GET http://localhost:3000/api/comment/{{id}}
+
+### PUT
+PUT http://localhost:3000/api/comment/{{id}} HTTP/1.1
+Content-Type: application/json
+
+{   
+    "description": "Comentario modificado",
+    "createDate": "2024-01-01T00:00:00.000Z",
+    "issue": {
+      "idIssue": 1
+    },
+    "user": {
+      "idUser": 1
+    }
+}
+
+### DELETE
+DELETE http://localhost:3000/api/comment/{{id}}

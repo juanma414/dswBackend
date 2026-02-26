@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { orm } from "../../shared/db/orm.js";
 import { issue } from "./issue.entity.js";
+import { typeIssue } from "../typeIssue/typeIssue.entity.js";
 
 const em = orm.em;
 
@@ -20,9 +21,14 @@ async function findAll(req: Request, res: Response) {
 //POST
 async function add(req: Request, res: Response) {
   try {
-    const issueClass = em.create(issue, req.body);
+    const data = req.body;
+
+    if (data.typeIssue) { data.typeIssue = em.getReference(typeIssue, data.typeIssue);}
+
+    const issueClass = em.create(issue, data);
     await em.flush(); //Es el commit
     res.status(201).json({ message: "Issue creado", data: issueClass });
+
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
@@ -39,12 +45,12 @@ async function findOne(req: Request, res: Response) {
   }
 }
 
-//PUT
+// PUT
 async function update(req: Request, res: Response) {
   try {
     const issueId = Number.parseInt(req.params.id);
-    const issueClass = em.getReference(issue, { issueId });
-    //como ya tenemos el registro que queremos modificar, pasamos los datos que ingresaron
+    // ✅ Igual que en findOne/delete — busca el registro y luego asigna
+    const issueClass = await em.findOneOrFail(issue, { issueId });
     em.assign(issueClass, req.body);
     await em.flush();
     res.status(200).json({ message: "Issue modificado", data: issueClass });

@@ -12,8 +12,9 @@ Content-Type: application/json
   "issueEndDate":"",
   "issueStataus":"En progreso",
   "issueSupervisor":"Juan Perez",
-  "issuePriority":"Alto"
-}
+  "issuePriority":"Alto",
+  "typeIssue":1
+  }
 
 ### GET ONE
 @id = {{issue.response.body.data.issueId}}

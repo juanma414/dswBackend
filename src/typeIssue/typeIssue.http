@@ -1,0 +1,26 @@
+### GET
+GET http://localhost:3000/api/typeIssue
+
+### POST
+# @name typeIssue
+POST http://localhost:3000/api/typeIssue HTTP/1.1
+Content-Type: application/json
+
+{
+  "typeIssueDescription": "Tipo sin Id en post"
+}
+
+### GET ONE
+@id = {{typeIssue.response.body.data.typeIssueId}}
+GET http://localhost:3000/api/typeIssue/{{id}}
+
+### PUT
+PUT http://localhost:3000/api/typeIssue/{{id}} HTTP/1.1
+Content-Type: application/json
+
+{   
+    "typeIssueDescription": "Error en el reporte B"
+}
+
+### DELETE
+DELETE http://localhost:3000/api/typeIssue/{{id}}
