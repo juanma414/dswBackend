@@ -7,4 +7,5 @@ export class project {
 
   @Property({ fieldName: 'projectDescription', nullable: false })
   projectDescription?: string; 
+
 }

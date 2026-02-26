@@ -1,0 +1,33 @@
+### GET ALL
+GET http://localhost:3000/api/sprint
+
+### GET BY PROJECT
+GET http://localhost:3000/api/sprint/project/1
+
+### POST
+# @name sprint
+POST http://localhost:3000/api/sprint HTTP/1.1
+Content-Type: application/json
+
+{
+  "startDate": "2024-01-01",
+  "endDate": "2024-01-14",
+  "description": "Sprint 2 - Actualización",
+  "project": 1
+}
+
+### GET ONE
+@id = {{sprint.response.body.data.idSprint}}
+GET http://localhost:3000/api/sprint/{{id}}
+
+### PUT
+PUT http://localhost:3000/api/sprint/{{id}} HTTP/1.1
+Content-Type: application/json
+
+{
+  "description": "Sprint 1 - Setup inicial (actualizado)",
+  "endDate": "2024-01-20"
+}
+
+### DELETE
+DELETE http://localhost:3000/api/sprint/{{id}}

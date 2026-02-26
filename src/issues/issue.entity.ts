@@ -1,6 +1,8 @@
 import { Entity, Property, PrimaryKey,ManyToOne, OneToMany, Collection } from "@mikro-orm/core";
 import { typeIssue } from "../typeIssue/typeIssue.entity.js";
 import { comment } from "../comment/comment.entity.js";
+import { project } from "../projects/project.entity.js";
+import { sprint } from "../sprint/sprint.entity.js";
 
 @Entity()
 export class issue {
@@ -25,12 +27,12 @@ export class issue {
   @Property({ fieldName: 'issuePriority', nullable: false}) 
   issuePriority?: string;
 
-    // Relaciones del diagrama
- // @ManyToOne(() => sprint, { fieldName: 'idSprint', nullable: true })
-  //sprint?: sprint;
+  // Relaciones del diagrama
+  @ManyToOne(() => sprint, { fieldName: 'idSprint', nullable: true })
+  sprint?: sprint;
 
-  //@ManyToOne(() => project, { fieldName: 'idProject', nullable: true })
-  //project?: project;
+  @ManyToOne(() => project, { fieldName: 'idProject', nullable: true })
+  project?: project;
 
   @ManyToOne(() => typeIssue, { nullable: false }) 
   typeIssue!: typeIssue;
