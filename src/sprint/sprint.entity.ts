@@ -7,6 +7,9 @@ export class sprint {
   @PrimaryKey({ fieldName: 'idSprint', autoincrement: true })
   idSprint!: number;
 
+  @Property({ fieldName: 'nroSprint', nullable: true })
+  nroSprint?: number;
+
   @Property({ fieldName: 'startDate', nullable: false })
   startDate!: Date;
 

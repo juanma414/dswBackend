@@ -7,7 +7,7 @@ export const orm = await MikroORM.init({
   entities: ["dist/**/*.entity.js"],
   entitiesTs: ["src/**/*.entity.ts"],
   dbName: "app2dolist",
-  clientUrl: "mysql://root:MySql2025!@localhost:3306/app2dolist",
+  clientUrl: "mysql://root:root@localhost:3306/app2dolist",
   driver: MySqlDriver,
   highlighter: new SqlHighlighter(),
   debug: true,

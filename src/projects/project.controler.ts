@@ -7,7 +7,7 @@ const em = orm.em;
 //GET ALL
 async function findAll(req: Request, res: Response) {
   try {
-    const projectClass = await em.find(project, {});
+    const projectClass = await em.find(project, {}, { populate: ['user'] });
     res.status(200).json({ messge: "Proyectos encontrados", projectClass });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
@@ -29,7 +29,7 @@ async function add(req: Request, res: Response) {
 async function findOne(req: Request, res: Response) {
   try {
     const projectId = Number.parseInt(req.params.id);
-    const projectClass = await em.findOneOrFail(project, { projectId });
+    const projectClass = await em.findOneOrFail(project, { projectId }, { populate: ['user'] });
     res.status(200).json({ message: "Proyecto encontrado", data: projectClass });
   } catch (error: any) {
     res.status(500).json({ message: error.message });

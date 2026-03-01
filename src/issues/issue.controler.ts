@@ -11,7 +11,7 @@ async function findAll(req: Request, res: Response) {
     // Filtrar issues que no estén eliminados ni completados
     const issueClass = await em.find(issue, { 
       issueStataus: { $nin: ['deleted', 'completed'] } 
-    });
+    }, { populate: ['typeIssue', 'project', 'sprint'] });
     res.status(200).json({ message: "Se encontraron todos los Issues", issueClass });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
