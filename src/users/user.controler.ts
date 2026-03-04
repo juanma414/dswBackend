@@ -116,8 +116,9 @@ async function login(req: Request, res: Response) {
   }
 }
 
+
 //SEED USERS - Crear usuarios de prueba
-async function seedUsers(req: Request, res: Response) {
+/*async function seedUsers(req: Request, res: Response) {
   try {
     const testUsers = [
       {
@@ -154,7 +155,7 @@ async function seedUsers(req: Request, res: Response) {
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
-}
+}*/
 
 export const controler = {
   findAll,
@@ -163,5 +164,5 @@ export const controler = {
   update,
   deleteUser,
   login,
-  seedUsers,
+  /*seedUsers,*/
 };

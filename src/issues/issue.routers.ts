@@ -4,7 +4,7 @@ import { controler } from "./issue.controler.js";
 export const issueRouter = Router();
 
 issueRouter.get("/", controler.findAll);
-issueRouter.get("/seed", controler.seedData);
+//issueRouter.get("/seed", controler.seedData);
 issueRouter.get("/deleted", controler.getDeleted);
 issueRouter.get("/completed", controler.getCompleted);
 issueRouter.get("/:id", controler.findOne);

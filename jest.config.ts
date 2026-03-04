@@ -5,15 +5,16 @@ const config: Config.InitialOptions = {
   testEnvironment: "node",
   verbose: true,
   coverageDirectory: "coverage",
-  collectCoverage: false,
+  collectCoverage: true, //Habilita la recolección de cobertura
   collectCoverageFrom: ["src/** /*.ts", "!src/** /*.spec.ts", "!**/node_modules/**"], //Se relaciona con la bandera anterior si la ponemos en true
   testPathIgnorePatterns: ["/node_modules/"],
   transform: {
     "^.+\\.ts?$": "ts-jest" },
-  testMatch: ["<rootDir>/src/** /*.spec.ts"],
-  moduleNameMapper: {
-    "^\\.{1,2}/.*\\.js$": "$1.ts",
-  },
+  testMatch: ["<rootDir>/src/**/*.spec.ts"],
+  
+   moduleNameMapper: {
+    "^(\\.{1,2}/.*)\\.js$": "$1"
+    },
 
  // extensionsToTreatAsEsm: [".ts"],
   //clearMocks: true,

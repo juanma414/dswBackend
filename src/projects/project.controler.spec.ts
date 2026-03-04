@@ -1,15 +1,3 @@
-/*import * as ormModule from "../../shared/db/orm.js";
-
-jest.mock("../../shared/db/orm.js"),
-  () => ({
-    orm: { em: { find: jest.fn() } },
-  });
-
-test("findAll - devuelve proyectos", async () => {
-  const emMock = ormModule.orm.em as jest.Mocked<typeof ormModule.orm.em>;
-  emMock.find.mockResolvedValue([{ id: 1, name: "Proyecto A" }]);
-});*/
-
 import { Request, Response } from "express";
 
 //Creamos un mock del orm (EntityManager)

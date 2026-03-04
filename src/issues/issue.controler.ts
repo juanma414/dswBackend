@@ -98,7 +98,7 @@ async function updateStatus(req: Request, res: Response) {
 }
 
 //SEED DATA - TEMPORAL PARA PRUEBAS
-async function seedData(req: Request, res: Response) {
+/*async function seedData(req: Request, res: Response) {
   try {
     const testIssues = [
       {
@@ -146,7 +146,7 @@ async function seedData(req: Request, res: Response) {
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
-}
+}*/
 
 //GET DELETED ISSUES (Ver issues eliminados)
 async function getDeleted(req: Request, res: Response) {
@@ -198,7 +198,7 @@ export const controler = {
   add,
   update,
   updateStatus,
-  seedData,
+  /*seedData,*/
   getDeleted,
   getCompleted,
   completeIssue,
