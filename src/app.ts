@@ -1,9 +1,10 @@
 import "reflect-metadata";
+import "dotenv/config";
 import cors from "cors";
+import { RequestContext } from "@mikro-orm/core";
 import express, { NextFunction, Request, Response } from "express";
 import { userRouter } from "./users/user.routers.js";
 import { orm, syncSchema } from "../shared/db/orm.js";
-import { RequestContext } from "@mikro-orm/core";
 import { issueRouter } from "./issues/issue.routers.js";
 import { projectRouter } from "./projects/project.routers.js";
 import { typeIssueRouter } from "./typeIssue/typeIssue.routers.js";
@@ -11,6 +12,7 @@ import { commentRouter } from "./comment/comment.routers.js";
 import { sprintRouter } from "./sprint/sprint.routers.js";
 
 const app = express();
+
 const corsOptions = {
   origin: "http://localhost:4200",
   optionsSuccessStatus: 200
@@ -39,8 +41,16 @@ app.use((_, res) => {
   return res.status(404).send({ message: "Resource not found" });
 });
 
-await syncSchema(); //Nunca ponerlo en produccion
+//Nunca ponerlo en produccion
+if (process.env.NODE_ENV !== "production") {
+  await syncSchema();
+}
+//Modificamos para que el puerto se asigne dinámicamente
+//app.listen(3000, () => {
+  //console.log("Server runnning on http://localhost:3000/");
+//});
 
-app.listen(3000, () => {
-  console.log("Server runnning on http://localhost:3000/");
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });

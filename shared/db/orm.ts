@@ -6,14 +6,19 @@ import { SqlHighlighter } from "@mikro-orm/sql-highlighter";
 export const orm = await MikroORM.init({
   entities: ["dist/**/*.entity.js"],
   entitiesTs: ["src/**/*.entity.ts"],
-  dbName: "app2dolist",
-  clientUrl: "mysql://root:MySql2025!@localhost:3306/app2dolist",
+
+  dbName: process.env.DB_NAME,
+  host: process.env.DB_HOST,
+  port: Number(process.env.DB_PORT),
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+
   driver: MySqlDriver,
+
   highlighter: new SqlHighlighter(),
-  debug: true,
+  debug: process.env.NODE_ENV !== "production",
 
   schemaGenerator: {
-    //solo se usa en desarrollo, nunca en producción
     disableForeignKeys: true,
     createForeignKeyConstraints: true,
     ignoreSchema: [],
@@ -21,12 +26,19 @@ export const orm = await MikroORM.init({
 });
 
 //Función que crea en caso de que no exista
-//En caso de que exista compara con lo que ya hay creado
+//En caso de que exista compara con lo que ya hay creado y hace los cambios necesarios
 export const syncSchema = async () => {
+
   const generator = orm.getSchemaGenerator();
-  /*
+    /*
     await generatr.dropSchema() --> borra y crea desde cero
     await generator.createSchema() -->
     */
+
+  //Solo se corre en desarrollo, en producción se recomienda usar migraciones
+  if (process.env.NODE_ENV !== "production") {
   await generator.updateSchema();
+  } else {
+    console.warn("No se recomienda ejecutar updateSchema en producción. Asegúrate de tener un proceso de migración adecuado.");
+  }
 };
