@@ -13,6 +13,8 @@ export const orm = await MikroORM.init({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
 
+  clientUrl: process.env.DATABASE_URL,
+
   driver: MySqlDriver,
 
   highlighter: new SqlHighlighter(),
