@@ -7,16 +7,20 @@ export const orm = await MikroORM.init({
   entities: ["dist/**/*.entity.js"],
   entitiesTs: ["src/**/*.entity.ts"],
 
-  dbName: process.env.DB_NAME,
-  host: process.env.DB_HOST,
-  port: Number(process.env.DB_PORT),
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
+  //dbName: process.env.DB_NAME,
+  //dbName: process.env.MYSQLDATABASE,
+  //host: process.env.DB_HOST,
+  //host: process.env.MYSQLHOST,
+  //port: Number(process.env.DB_PORT),
+  //port: Number(process.env.MYSQLPORT),
+  //user: process.env.DB_USER,
+  //user: process.env.MYSQLUSER,
+  //password: process.env.DB_PASSWORD,
+  //password: process.env.MYSQLPASSWORD,
 
-  clientUrl: process.env.DATABASE_URL,
+  clientUrl: process.env.MYSQL_URL,
 
   driver: MySqlDriver,
-
   highlighter: new SqlHighlighter(),
   debug: process.env.NODE_ENV !== "production",
 
