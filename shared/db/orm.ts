@@ -31,21 +31,58 @@ const clientUrlFromParts =
     ? `mysql://${mysqlUser}:${mysqlPassword || ""}@${mysqlHost}:${mysqlPort}/${dbNameFromEnv}`
     : undefined;
 
-export const orm = await MikroORM.init({
-  entities: ["dist/**/*.entity.js"],
-  entitiesTs: ["src/**/*.entity.ts"],
-  dbName: dbNameFromEnv || defaultDbName,
-  clientUrl: validClientUrl || clientUrlFromParts || defaultClientUrl,
-  driver: MySqlDriver,
-  highlighter: new SqlHighlighter(),
-  debug: process.env.NODE_ENV !== "production",
+const resolvedClientUrl = validClientUrl || clientUrlFromParts || defaultClientUrl;
+const connectRetries = Number(process.env.DB_CONNECT_RETRIES || "8");
+const connectRetryDelayMs = Number(process.env.DB_CONNECT_RETRY_DELAY_MS || "2500");
 
-  schemaGenerator: {
-    disableForeignKeys: true,
-    createForeignKeyConstraints: true,
-    ignoreSchema: [],
-  },
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const initOrmWithRetry = async () => {
+  let lastError: unknown;
+
+  for (let attempt = 1; attempt <= connectRetries; attempt++) {
+    try {
+      return await MikroORM.init({
+        entities: ["dist/**/*.entity.js"],
+        entitiesTs: ["src/**/*.entity.ts"],
+        dbName: dbNameFromEnv || defaultDbName,
+        clientUrl: resolvedClientUrl,
+        driver: MySqlDriver,
+        highlighter: new SqlHighlighter(),
+        debug: process.env.NODE_ENV !== "production",
+
+        schemaGenerator: {
+          disableForeignKeys: true,
+          createForeignKeyConstraints: true,
+          ignoreSchema: [],
+        },
+      });
+    } catch (error) {
+      lastError = error;
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(`[DB] connection attempt ${attempt}/${connectRetries} failed: ${message}`);
+
+      if (attempt < connectRetries) {
+        await sleep(connectRetryDelayMs);
+      }
+    }
+  }
+
+  throw lastError;
+};
+
+console.log("[DB] startup config", {
+  dbName: dbNameFromEnv || defaultDbName,
+  hasMysqlUrl: Boolean(mysqlUrlFromEnv),
+  hasDatabaseUrl: Boolean(databaseUrlFromEnv),
+  hasMysqlPrivateUrl: Boolean(mysqlPrivateUrlFromEnv),
+  hasMysqlPublicUrl: Boolean(mysqlPublicUrlFromEnv),
+  hasMysqlHostParts: Boolean(mysqlHost && mysqlUser && dbNameFromEnv),
+  connectRetries,
+  connectRetryDelayMs,
 });
+
+export const orm = await initOrmWithRetry();
 
 //Función que crea en caso de que no exista
 //En caso de que exista compara con lo que ya hay creado y hace los cambios necesarios

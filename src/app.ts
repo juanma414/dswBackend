@@ -11,6 +11,15 @@ import { typeIssueRouter } from "./typeIssue/typeIssue.routers.js";
 import { commentRouter } from "./comment/comment.routers.js";
 import { sprintRouter } from "./sprint/sprint.routers.js";
 
+process.on("unhandledRejection", (reason) => {
+  console.error("[Startup] unhandled rejection", reason);
+});
+
+process.on("uncaughtException", (error) => {
+  console.error("[Startup] uncaught exception", error);
+  process.exit(1);
+});
+
 const app = express();
 
 const corsOptions = {
