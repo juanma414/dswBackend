@@ -3,23 +3,16 @@ import { MikroORM } from "@mikro-orm/core";
 import { MySqlDriver } from "@mikro-orm/mysql";
 import { SqlHighlighter } from "@mikro-orm/sql-highlighter";
 
+const defaultDbName = "app2dolist";
+const defaultClientUrl = `mysql://root:root@localhost:3306/${defaultDbName}`;
+const mysqlUrlFromEnv = process.env.MYSQL_URL?.trim();
+const dbNameFromEnv = process.env.MYSQL_DB_NAME?.trim();
+
 export const orm = await MikroORM.init({
   entities: ["dist/**/*.entity.js"],
   entitiesTs: ["src/**/*.entity.ts"],
-
-  //dbName: process.env.DB_NAME,
-  //dbName: process.env.MYSQLDATABASE,
-  //host: process.env.DB_HOST,
-  //host: process.env.MYSQLHOST,
-  //port: Number(process.env.DB_PORT),
-  //port: Number(process.env.MYSQLPORT),
-  //user: process.env.DB_USER,
-  //user: process.env.MYSQLUSER,
-  //password: process.env.DB_PASSWORD,
-  //password: process.env.MYSQLPASSWORD,
-
-  clientUrl: process.env.MYSQL_URL,
-
+  dbName: dbNameFromEnv || defaultDbName,
+  clientUrl: process.env.DATABASE_URL?.trim() || mysqlUrlFromEnv || defaultClientUrl,
   driver: MySqlDriver,
   highlighter: new SqlHighlighter(),
   debug: process.env.NODE_ENV !== "production",
