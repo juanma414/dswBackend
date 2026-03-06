@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { orm } from "../../shared/db/orm.js";
 import { user } from "./user.entity.js";
 import bcrypt from "bcrypt";
+import { generateToken } from "../utils/jwt.utils.js";
 
 const em = orm.em;
 
@@ -40,10 +41,20 @@ async function add(req: Request, res: Response) {
     const userClass = em.create(user, userData as any);
     await em.flush();
     
-    // No devolver la contraseña en la respuesta
-    const { userPassword: _, ...userWithoutPassword } = userClass;
+    // Generar JWT con datos seguros del usuario
+    const token = generateToken({
+      userId: userClass.userId as number,
+      userEmail: userClass.userEmail || '',
+      userRol: userClass.userRol?.toString() || 'developer',
+      userName: userClass.userName || '',
+      userLastName: userClass.userLastName || ''
+    });
     
-    res.status(201).json({ message: "Usuario registrado exitosamente", data: userWithoutPassword });
+    res.status(201).json({ 
+      message: "Usuario registrado exitosamente", 
+      token,
+      success: true 
+    });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
@@ -103,12 +114,18 @@ async function login(req: Request, res: Response) {
       return res.status(401).json({ message: "Email o contraseña incorrectos" });
     }
     
-    // Login exitoso - no devolver contraseña
-    const { userPassword: _, ...userWithoutPassword } = userClass;
+    // Generar JWT con datos seguros del usuario
+    const token = generateToken({
+      userId: userClass.userId as number,
+      userEmail: userClass.userEmail || '',
+      userRol: userClass.userRol?.toString() || 'developer',
+      userName: userClass.userName || '',
+      userLastName: userClass.userLastName || ''
+    });
     
     res.status(200).json({ 
       message: "Login exitoso", 
-      data: userWithoutPassword,
+      token,
       success: true 
     });
   } catch (error: any) {

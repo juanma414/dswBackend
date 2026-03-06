@@ -2,8 +2,39 @@ import { Request, Response } from "express";
 import { orm } from "../../shared/db/orm.js";
 import { issue } from "./issue.entity.js";
 import { typeIssue } from "../typeIssue/typeIssue.entity.js";
+import { user } from "../users/user.entity.js";
 
 const em = orm.em;
+
+// Helper para enriquecer issues con datos completos del supervisor
+async function enrichIssuesWithSupervisor(issues: issue[]): Promise<any[]> {
+  return Promise.all(issues.map(async (iss) => {
+    const issueData: any = { ...iss };
+    
+    if (iss.issueSupervisor) {
+      const supervisorId = Number.parseInt(iss.issueSupervisor);
+      
+      // Si es un número válido, intentar buscar el usuario
+      if (!isNaN(supervisorId)) {
+        try {
+          const supervisor = await em.findOne(user, { userId: supervisorId });
+          if (supervisor) {
+            issueData.supervisorData = {
+              userId: supervisor.userId,
+              userName: supervisor.userName,
+              userEmail: supervisor.userEmail,
+              userRol: supervisor.userRol
+            };
+          }
+        } catch (error) {
+          // Si no encuentra el usuario, mantener solo el ID
+        }
+      }
+    }
+    
+    return issueData;
+  }));
+}
 
 //GET ALL (excluir los eliminados y completados)
 async function findAll(req: Request, res: Response) {
@@ -12,7 +43,11 @@ async function findAll(req: Request, res: Response) {
     const issueClass = await em.find(issue, { 
       issueStataus: { $nin: ['deleted', 'completed'] } 
     }, { populate: ['typeIssue', 'project', 'sprint'] });
-    res.status(200).json({ message: "Se encontraron todos los Issues", issueClass });
+    
+    // Enriquecer con datos del supervisor
+    const enriched = await enrichIssuesWithSupervisor(issueClass);
+    
+    res.status(200).json({ message: "Se encontraron todos los Issues", issueClass: enriched });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
@@ -38,8 +73,12 @@ async function add(req: Request, res: Response) {
 async function findOne(req: Request, res: Response) {
   try {
     const issueId = Number.parseInt(req.params.id);
-    const issueClass = await em.findOneOrFail(issue, { issueId });
-    res.status(200).json({ message: "Issue encontrado", data: issueClass });
+    const issueClass = await em.findOneOrFail(issue, { issueId }, { populate: ['typeIssue', 'project', 'sprint'] });
+    
+    // Enriquecer con datos del supervisor
+    const enriched = await enrichIssuesWithSupervisor([issueClass]);
+    
+    res.status(200).json({ message: "Issue encontrado", data: enriched[0] });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
@@ -50,10 +89,14 @@ async function update(req: Request, res: Response) {
   try {
     const issueId = Number.parseInt(req.params.id);
     // ✅ Igual que en findOne/delete — busca el registro y luego asigna
-    const issueClass = await em.findOneOrFail(issue, { issueId });
+    const issueClass = await em.findOneOrFail(issue, { issueId }, { populate: ['typeIssue', 'project', 'sprint'] });
     em.assign(issueClass, req.body);
     await em.flush();
-    res.status(200).json({ message: "Issue modificado", data: issueClass });
+    
+    // Enriquecer con datos del supervisor
+    const enriched = await enrichIssuesWithSupervisor([issueClass]);
+    
+    res.status(200).json({ message: "Issue modificado", data: enriched[0] });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
@@ -177,15 +220,18 @@ async function completeIssue(req: Request, res: Response) {
   try {
     const issueId = Number.parseInt(req.params.id);
     
-    const issueClass = await em.findOneOrFail(issue, { issueId });
+    const issueClass = await em.findOneOrFail(issue, { issueId }, { populate: ['typeIssue', 'project', 'sprint'] });
     issueClass.issueStataus = 'completed';
     issueClass.issueEndDate = new Date();
     
     await em.flush();
     
+    // Enriquecer con datos del supervisor
+    const enriched = await enrichIssuesWithSupervisor([issueClass]);
+    
     res.status(200).json({ 
       message: "Issue marcado como completado", 
-      data: issueClass 
+      data: enriched[0]
     });
   } catch (error: any) {
     res.status(500).json({ message: error.message });

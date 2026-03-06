@@ -3,6 +3,7 @@ import { typeIssue } from "../typeIssue/typeIssue.entity.js";
 import { comment } from "../comment/comment.entity.js";
 import { project } from "../projects/project.entity.js";
 import { sprint } from "../sprint/sprint.entity.js";
+import { user } from "../users/user.entity.js";
 
 @Entity()
 export class issue {
@@ -21,7 +22,7 @@ export class issue {
   @Property({ fieldName: 'issueStataus', nullable: false}) 
   issueStataus?: string;
 
-  @Property({ fieldName: 'issueSupervisor'}) 
+  @Property({ fieldName: 'issueSupervisor', nullable: true }) 
   issueSupervisor?: string;
 
   @Property({ fieldName: 'issuePriority', nullable: false}) 
