@@ -51,7 +51,7 @@ async function update(req: Request, res: Response) {
 }
 
 //DELETE
-async function deleteUser(req: Request, res: Response) {
+async function deleteProject(req: Request, res: Response) {
   try {
     const projectId = Number.parseInt(req.params.id);
     const projectClass = em.getReference(project, { projectId });
@@ -67,5 +67,5 @@ export const controler = {
   findOne,
   add,
   update,
-  deleteUser,
+  deleteProject,
 };

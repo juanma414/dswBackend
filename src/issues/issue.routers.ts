@@ -1,7 +1,11 @@
 import { Router } from "express";
 import { controler } from "./issue.controler.js";
+import { authMiddleware } from "../utils/auth.middleware.js";
 
 export const issueRouter = Router();
+
+//La autorización base para todos los usuarios 
+issueRouter.use(authMiddleware);
 
 issueRouter.get("/", controler.findAll);
 //issueRouter.get("/seed", controler.seedData);
@@ -12,4 +16,4 @@ issueRouter.post("/", controler.add);
 issueRouter.put("/:id", controler.update);
 issueRouter.patch("/:id/status", controler.updateStatus);
 issueRouter.patch("/:id/complete", controler.completeIssue);
-issueRouter.delete("/:id", controler.deleteUser);
+issueRouter.delete("/:id", controler.deleteIssue);

@@ -103,7 +103,7 @@ async function update(req: Request, res: Response) {
 }
 
 //DELETE (Soft Delete - cambiar estado a deleted)
-async function deleteUser(req: Request, res: Response) {
+async function deleteIssue(req: Request, res: Response) {
   try {
     const issueId = Number.parseInt(req.params.id);
     const issueClass = await em.findOneOrFail(issue, { issueId });
@@ -248,5 +248,5 @@ export const controler = {
   getDeleted,
   getCompleted,
   completeIssue,
-  deleteUser,
+  deleteIssue,
 };

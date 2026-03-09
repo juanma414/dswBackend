@@ -10,7 +10,8 @@ const em = orm.em;
 async function findAll(req: Request, res: Response) {
   try {
     const usersClasses = await em.find(user, {});
-    res.status(200).json({ messge: "Todos los usuarios encontrados", usersClasses });
+    //res.status(200).json({ messge: "Todos los usuarios encontrados", usersClasses });
+    res.status(200).json(usersClasses);
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
@@ -125,7 +126,7 @@ async function login(req: Request, res: Response) {
     
     res.status(200).json({ 
       message: "Login exitoso", 
-      token,
+      token: token,
       success: true 
     });
   } catch (error: any) {

@@ -28,7 +28,6 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
 app.use(express.json());
 
 //luego de los middlewares base
@@ -36,15 +35,12 @@ app.use((req, res, next) => {
   RequestContext.create(orm.em, next);
 });
 
-//antes de las rutas y middleware del negocio
-
 app.use("/api/user", userRouter);
 app.use("/api/typeIssue", typeIssueRouter);
 app.use("/api/sprint", sprintRouter);
 app.use("/api/project", projectRouter);
 app.use("/api/issue", issueRouter);
 app.use("/api/comment", commentRouter);
-
 
 app.use((_, res) => {
   return res.status(404).send({ message: "Resource not found" });

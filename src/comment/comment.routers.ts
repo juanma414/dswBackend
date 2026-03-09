@@ -1,7 +1,11 @@
 import { Router } from "express";
 import { commentControler } from "./comment.controler.js";
+import { authMiddleware } from "../utils/auth.middleware.js";
 
 export const commentRouter = Router();
+
+//La autorización base para todos los usuarios 
+commentRouter.use(authMiddleware);
 
 commentRouter.get("/", commentControler.findAll);
 commentRouter.get("/issue/:idIssue", commentControler.findByIssue);

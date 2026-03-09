@@ -173,7 +173,7 @@ describe('project.controler', () => {
     const res = { status } as unknown as Response & { status: any };
     (res as any).status = status;
 
-    await controler.deleteUser(req, res);
+    await controler.deleteProject(req, res);
 
     expect(emMock.getReference).toHaveBeenCalled();
     expect(emMock.removeAndFlush).toHaveBeenCalledWith(projectRef);
@@ -181,7 +181,7 @@ describe('project.controler', () => {
     expect(json).toHaveBeenCalledWith({ message: "Proyecto borrado", data: projectRef });
   });
 
-  it('deleteUser - error (500)', async () => {
+  it('deleteProject - error (500)', async () => {
     emMock.getReference.mockImplementation(() => { throw new Error('ref fail') });
 
     const req = { params: { id: '3' } } as unknown as Request;
@@ -190,7 +190,7 @@ describe('project.controler', () => {
     const res = { status } as unknown as Response & { status: any };
     (res as any).status = status;
 
-    await controler.deleteUser(req, res);
+    await controler.deleteProject(req, res);
 
     expect(status).toHaveBeenCalledWith(500);
     expect(json).toHaveBeenCalledWith({ message: 'ref fail' });
