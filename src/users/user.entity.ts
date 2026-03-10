@@ -19,4 +19,7 @@ export class user {
 
   @Property({ fieldName: 'userPassword', nullable: false })
   userPassword?: string;
+
+  @Property({ fieldName: 'userActive', nullable: false, default: true }) 
+  userActive: boolean = true; //Por defecto va en true es decir está activo.
 }
