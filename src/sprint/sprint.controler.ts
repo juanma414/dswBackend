@@ -39,8 +39,26 @@ async function findOne(req: Request, res: Response) {
 // POST
 async function add(req: Request, res: Response) {
   try {
-    const sprintNew = em.create(sprint, req.body);
+
+    const { project, ...otherData } = req.body;
+
+    if (!project) {
+      return res.status(400).json({ message: "El ID del proyecto es obligatorio" });
+    }
+
+   const count = await em.count(sprint, { project: Number(project) as any });
+    
+   //Le asignamos el número siguiente
+    const nextNumber = count + 1;
+
+    const sprintNew = em.create(sprint, {
+      ...req.body,
+      nroSprint: nextNumber, // Aquí forzamos el valor
+      project: Number(project) // Aseguramos que sea número para la FK
+    });
+
     await em.flush();
+
     res.status(201).json({ message: "Sprint creado", data: sprintNew });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
