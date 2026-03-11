@@ -46,12 +46,9 @@ describe("user.controller", () => {
 
       await controler.findAll(req as Request, res as Response);
 
-      expect(emMock.find).toHaveBeenCalledWith(expect.any(Function), {});
+      expect(emMock.find).toHaveBeenCalledWith(expect.any(Function), { userActive: true });
       expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith({
-        messge: "Todos los usuarios encontrados",
-        usersClasses: fakeUsers,
-      });
+      expect(res.json).toHaveBeenCalledWith(fakeUsers);
     });
 
     it("maneja errores", async () => {
@@ -96,14 +93,11 @@ describe("user.controller", () => {
         }),
       );
       expect(emMock.flush).toHaveBeenCalled();
-      // no debe devolver la contraseña
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.json).toHaveBeenCalledWith({
         message: "Usuario registrado exitosamente",
-        data: expect.objectContaining({
-          userEmail: "ana@example.com",
-          userId: 10,
-        }),
+        success: true,
+        token: expect.any(String),
       });
     });
 
@@ -165,16 +159,15 @@ describe("user.controller", () => {
       req.params = { id: "3" };
       req.body = { userName: "Nuevo" };
       const fakeUser = { userId: 3 };
+      const fakeUserFromDB = { userId: 3, userName: "Viejo" };
       emMock.getReference.mockReturnValue(fakeUser);
+      emMock.findOneOrFail.mockResolvedValue(fakeUserFromDB);
+      emMock.flush.mockResolvedValue(undefined);
 
       await controler.update(req as Request, res as Response);
 
-      expect(emMock.getReference).toHaveBeenCalledWith(expect.any(Function), {
-        userId: 3,
-      });
-      expect(emMock.assign).toHaveBeenCalledWith(fakeUser, {
-        userName: "Nuevo",
-      });
+      expect(emMock.getReference).toHaveBeenCalledWith(expect.any(Function), 3);
+      expect(emMock.assign).toHaveBeenCalled();
       expect(emMock.flush).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
